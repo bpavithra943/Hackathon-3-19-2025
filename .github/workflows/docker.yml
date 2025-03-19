@@ -43,3 +43,8 @@ jobs:
         docker build -t openproject:latest -f Dockerfile .
         docker tag openproject:latest 539935451710.dkr.ecr.us-east-1.amazonaws.com/openproject:latest
         docker push 539935451710.dkr.ecr.us-east-1.amazonaws.com/openproject:latest
+
+    # Optionally, remove local Docker images after pushing
+    - name: Cleanup local Docker images
+      run: |
+        docker rmi 539935451710.dkr.ecr.us-east-1.amazonaws.com/openproject:latest
