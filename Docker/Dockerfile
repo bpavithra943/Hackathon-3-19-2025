@@ -1,8 +1,14 @@
-# Use the official OpenProject image as the base image
-FROM openproject/community:latest
+FROM openproject/openproject:15
 
-# Expose the port that OpenProject will run on
-EXPOSE 80
+# If installing a local plugin (using `path:` in the `Gemfile.plugins` above),
+# you will have to copy the plugin code into the container here and use the
+# path inside of the container. Say for `/app/vendor/plugins/openproject-slack`:
+# COPY /path/to/my/local/openproject-slack /app/vendor/plugins/openproject-slack
 
-# Start OpenProject
-CMD ["openproject", "start"]
+COPY Gemfile.plugins /app/
+
+# If the plugin uses any external NPM dependencies you have to install them here.
+# RUN npm add npm <package-name>*
+
+RUN bundle config unset deployment && bundle install && bundle config set deployment 'true'
+RUN ./docker/prod/setup/precompile-assets.sh
